@@ -5,9 +5,9 @@
 <title>Rekam Jejak Nilai Rapor</title>
 
 <style>
-body{font-family:"Times New Roman";background:#ccc}
-.page{width:210mm;background:#fff;margin:10mm auto;padding:15mm}
-h3{text-align:center;margin-bottom:10px}
+body{font-family:"Times New Roman", Times, serif; background:#ccc; margin:0; padding:0;}
+.page{width:210mm; background:#fff; margin:10mm auto; padding:15mm; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-height: 297mm;}
+h3{text-align:center; margin-bottom:20px; text-transform: uppercase; letter-spacing: 1px;}
 
 /* IDENTITAS */
 .identitas{
@@ -18,207 +18,261 @@ h3{text-align:center;margin-bottom:10px}
 }
 .identitas td{
   border:1px solid #000;
-  padding:6px;
+  padding:8px;
 }
-.identitas .label{width:230px;font-weight:bold}
-.identitas .titik{width:20px;text-align:center}
+.identitas .label{width:230px; font-weight:bold; background-color: #f9f9f9;}
+.identitas .titik{width:20px; text-align:center}
 .identitas input[type=text]{
   width:100%;
   border:none;
   font-family:inherit;
+  font-size: 11pt;
+  outline: none;
 }
-.identitas .opsi label{margin-right:20px}
+.identitas .opsi label{margin-right:15px; cursor: pointer;}
 
 /* TABEL NILAI */
-.rapor{width:100%;border-collapse:collapse;font-size:11pt}
-.rapor th,.rapor td{border:1px solid #000;padding:5px;text-align:center}
-.rapor td.mapel{text-align:left}
-input.nilai{width:45px;border:none;text-align:center;font-family:inherit}
+.rapor{width:100%; border-collapse:collapse; font-size:10pt;}
+.rapor th, .rapor td{border:1px solid #000; padding:6px; text-align:center;}
+.rapor th{background-color: #f2f2f2;}
+.rapor td.mapel{text-align:left; padding-left: 10px;}
 
-/* BLOK SEL */
-td.block{background:#444}
-td.block input{display:none}
+/* INPUT NILAI */
+input.nilai{
+  width:45px;
+  border:none;
+  text-align:center;
+  font-family:inherit;
+  background:transparent;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  font-size: 10pt;
+}
+input.nilai::-webkit-outer-spin-button,
+input.nilai::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* KETERANGAN DI BAWAH TABEL */
+.keterangan-section {
+  margin-top: 20px;
+  border: 1px dashed #666;
+  padding: 15px;
+  font-size: 10pt;
+  line-height: 1.6;
+  background-color: #fdfdfd;
+}
+.keterangan-section h4 {
+  margin: 0 0 5px 0;
+  text-decoration: underline;
+}
+.keterangan-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* TOMBOL AKSI */
+.action-buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #333;
+  font-weight: bold;
+}
+.btn-print { background-color: #e7e7e7; }
+.btn-send { background-color: #4CAF50; color: white; border: none; }
 
 @media print{
- body{background:#fff}
- .page{margin:0}
- input{border:none}
+  body{background:#fff;}
+  .page{margin:0; box-shadow:none; width: 100%;}
+  .action-buttons {display:none;}
+  input::placeholder {color: transparent;}
+  .keterangan-section {border: 1px solid #000;} /* Garis tegas saat diprint */
 }
 </style>
 </head>
 
 <body>
+
 <div class="page">
+  <h3>REKAM JEJAK NILAI RAPOR</h3>
 
-<h3>REKAM JEJAK NILAI RAPOR</h3>
+  <table class="identitas">
+    <tr>
+      <td class="label">NAMA LENGKAP</td>
+      <td class="titik">:</td>
+      <td colspan="6"><input type="text" placeholder="Masukkan Nama Lengkap..."></td>
+    </tr>
+    <tr>
+      <td class="label">RENCANA SETELAH LULUS</td>
+      <td class="titik">:</td>
+      <td colspan="6" class="opsi">
+        <label><input type="radio" name="rencana"> Kuliah</label>
+        <label><input type="radio" name="rencana"> Bekerja</label>
+        <label><input type="radio" name="rencana"> Wirausaha</label>
+        <label><input type="radio" name="rencana"> Lainnya</label>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">PILIHAN PERGURUAN TINGGI</td>
+      <td class="titik">:</td>
+      <td colspan="6"><input type="text" placeholder="Contoh: Universitas Indonesia / ITB"></td>
+    </tr>
+    <tr>
+      <td class="label" rowspan="2">PILIHAN JURUSAN</td>
+      <td class="titik" rowspan="2">:</td>
+      <td colspan="6">1. <input type="text" placeholder="Pilihan Pertama"></td>
+    </tr>
+    <tr>
+      <td colspan="6">2. <input type="text" placeholder="Pilihan Kedua"></td>
+    </tr>
+  </table>
 
-<!-- IDENTITAS -->
-<table class="identitas">
-<tr>
-  <td class="label">NAMA</td>
-  <td class="titik">:</td>
-  <td colspan="6"><input type="text"></td>
-</tr>
+  <table class="rapor" id="rapor">
+    <thead>
+      <tr>
+        <th rowspan="2">NO</th>
+        <th rowspan="2">MATA PELAJARAN</th>
+        <th colspan="5">SEMESTER</th>
+        <th rowspan="2">JUMLAH</th>
+        <th rowspan="2">RATA-RATA</th>
+      </tr>
+      <tr>
+        <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+      </tr>
+    </thead>
+    <tbody id="isi-mapel">
+      </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="2">JUMLAH TOTAL</th>
+        <th id="s1">0</th><th id="s2">0</th><th id="s3">0</th>
+        <th id="s4">0</th><th id="s5">0</th>
+        <th colspan="2" style="background:#eee;">-</th>
+      </tr>
+      <tr>
+        <th colspan="2">RATA-RATA SEMESTER</th>
+        <th id="r1">0</th><th id="r2">0</th><th id="r3">0</th>
+        <th id="r4">0</th><th id="r5">0</th>
+        <th colspan="2" style="background:#eee;">-</th>
+      </tr>
+    </tfoot>
+  </table>
 
-<tr>
-  <td class="label">RENCANA SETELAH LULUS</td>
-  <td class="titik">:</td>
-  <td colspan="6" class="opsi">
-    <label><input type="radio" name="rencana"> Kuliah</label>
-    <label><input type="radio" name="rencana"> Bekerja</label>
-    <label><input type="radio" name="rencana"> Wirausaha</label>
-    <label><input type="radio" name="rencana"> Lainnya</label>
-  </td>
-</tr>
+  <div class="keterangan-section">
+    <h4>Keterangan & Catatan:</h4>
+    <ul>
+      <li>Nilai yang diinputkan adalah nilai yang sesuai dengan yang tertera di rapor.</li>
+      <li>Apabila tidak ada nilai pada mata pelajaran tsb di rapor, silahkan kosongkan tidak perlu diisi.</li>
+      <li>Kolom "Jumlah" dan "Rata-rata" akan terhitung secara otomatis setelah Anda mengisi nilai.</li>
+      <li>Sebelum kirim data rekam jejak, silahkan <strong>Download/Cetak PDF</strong> terlebih dahulu sebagai arsip kalian.</li>
+      <li>Klik tombol <strong>Kirim Data</strong> untuk menyimpan rekam jejak secara digital ke sistem sekolah.</li>
+    </ul>
+  </div>
 
-<tr>
-  <td class="label">PILIHAN PERGURUAN TINGGI</td>
-  <td class="titik">:</td>
-  <td colspan="6"><input type="text"></td>
-</tr>
-
-<tr>
-  <td class="label" rowspan="2">PILIHAN JURUSAN</td>
-  <td class="titik" rowspan="2">:</td>
-  <td colspan="6">1. <input type="text"></td>
-</tr>
-<tr>
-  <td colspan="6">2. <input type="text"></td>
-</tr>
-</table>
-
-<!-- TABEL NILAI -->
-<table class="rapor" id="rapor">
-<tr>
-  <th rowspan="2">NO</th>
-  <th rowspan="2">MATA PELAJARAN</th>
-  <th colspan="5">SEMESTER</th>
-  <th rowspan="2">JUMLAH</th>
-  <th rowspan="2">RATA-RATA</th>
-</tr>
-<tr>
-  <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
-</tr>
-
-<script>
-const aturan={
- s12:["Sejarah","Biologi","Ekonomi","Geografi","Sosiologi","Prakarya"],
- s35:["Ilmu Pengetahuan Alam","Ilmu Pengetahuan Sosial","Informatika"]
-};
-
-const mapel=[
-"Pendidikan Agama dan Budi Pekerti",
-"Pendidikan Pancasila",
-"Bahasa Indonesia",
-"Matematika",
-"Ilmu Pengetahuan Alam (IPA)",
-"Ilmu Pengetahuan Sosial (IPS)",
-"Bahasa Inggris",
-"Pendidikan Jasmani Olahraga dan",
-"Informatika",
-"Sejarah",
-"Seni dan Budaya",
-"Biologi",
-"Ekonomi",
-"Geografi",
-"Sosiologi",
-"Prakarya dan Kewirausahaan",
-"Mulok : Bahasa Sunda"
-];
-
-mapel.forEach((m,i)=>{
- document.write(`<tr><td>${i+1}</td><td class="mapel">${m}</td>`);
- for(let s=1;s<=5;s++){
-  let block=false;
-  if(s<=2 && aturan.s12.some(x=>m.includes(x))) block=true;
-  if(s>=3 && aturan.s35.some(x=>m.includes(x))) block=true;
-  document.write(block
-    ? `<td class="block"></td>`
-    : `<td><input class="nilai" oninput="hitung()"></td>`
-  );
- }
- document.write(`<td class="jml">0</td><td class="rata">0</td></tr>`);
-});
-</script>
-
-<tr>
-<th colspan="2">JUMLAH</th>
-<th id="s1">0</th><th id="s2">0</th><th id="s3">0</th>
-<th id="s4">0</th><th id="s5">0</th>
-<th></th><th></th>
-</tr>
-<tr>
-<th colspan="2">RATA-RATA</th>
-<th id="r1">0</th><th id="r2">0</th><th id="r3">0</th>
-<th id="r4">0</th><th id="r5">0</th>
-<th></th><th></th>
-</tr>
-</table>
-
-<br>
-<button onclick="window.print()">🖨️ Download PDF</button>
-<button onclick="kirim()">💾 Simpan ke Spreadsheet</button>
-
+  <div class="action-buttons">
+    <button class="btn-print" onclick="window.print()">🖨️ Download / Cetak PDF</button>
+    <button class="btn-send" onclick="kirim()">💾 Kirim Data Rekam Jejak</button>
+  </div>
 </div>
 
 <script>
-function hitung(){
- let sumS=[0,0,0,0,0], cntS=[0,0,0,0,0];
- document.querySelectorAll("#rapor tr").forEach(tr=>{
-  const inputs=tr.querySelectorAll("input.nilai");
-  if(inputs.length){
-   let sum=0,c=0;
-   inputs.forEach((i,idx)=>{
-    if(i.value){
-     sum+=+i.value;c++;
-     sumS[idx]+=+i.value;cntS[idx]++;
-    }
-   });
-   tr.querySelector(".jml").innerText=sum;
-   tr.querySelector(".rata").innerText=c?(sum/c).toFixed(2):0;
+const mapel=[
+  "Pendidikan Agama dan Budi Pekerti",
+  "Pendidikan Pancasila",
+  "Bahasa Indonesia",
+  "Matematika",
+  "Ilmu Pengetahuan Alam (IPA)",
+  "Ilmu Pengetahuan Sosial (IPS)",
+  "Bahasa Inggris",
+  "Pendidikan Jasmani Olahraga dan Kesehatan",
+  "Informatika",
+  "Sejarah",
+  "Seni dan Budaya",
+  "Biologi",
+  "Ekonomi",
+  "Geografi",
+  "Sosiologi",
+  "Prakarya dan Kewirausahaan",
+  "Mulok : Bahasa Sunda"
+];
+
+const tbody = document.getElementById("isi-mapel");
+mapel.forEach((m, i) => {
+  let row = `<tr>
+    <td>${i+1}</td>
+    <td class="mapel">${m}</td>`;
+  for(let s=1; s<=5; s++){
+    row += `<td><input type="number" class="nilai" oninput="hitung()" min="0" max="100"></td>`;
   }
- });
- for(let i=0;i<5;i++){
-  document.getElementById("s"+(i+1)).innerText=sumS[i];
-  document.getElementById("r"+(i+1)).innerText=
-    cntS[i]?(sumS[i]/cntS[i]).toFixed(2):0;
- }
+  row += `<td class="jml">0</td><td class="rata">0</td></tr>`;
+  tbody.innerHTML += row;
+});
+
+function hitung(){
+  let sumS=[0,0,0,0,0], cntS=[0,0,0,0,0];
+
+  document.querySelectorAll("#isi-mapel tr").forEach((tr)=>{
+    const inputs = tr.querySelectorAll("input.nilai");
+    let rowSum = 0;
+    let rowCount = 0;
+
+    inputs.forEach((input, idx)=>{
+      let val = parseFloat(input.value);
+      if(!isNaN(val) && val > 0){
+        rowSum += val;
+        rowCount++;
+        sumS[idx] += val;
+        cntS[idx]++;
+      }
+    });
+
+    const cellJml = tr.querySelector(".jml");
+    const cellRata = tr.querySelector(".rata");
+    if(cellJml) cellJml.innerText = rowSum;
+    if(cellRata) cellRata.innerText = rowCount ? (rowSum/rowCount).toFixed(2) : 0;
+  });
+
+  for(let i=0; i<5; i++){
+    document.getElementById("s"+(i+1)).innerText = sumS[i];
+    document.getElementById("r"+(i+1)).innerText = cntS[i] ? (sumS[i]/cntS[i]).toFixed(2) : 0;
+  }
 }
-</script>
-<script>
+
 function kirim(){
+  const allTexts = document.querySelectorAll(".identitas input[type=text]");
   const data = {
-    nama: document.querySelector("input[type=text]").value,
+    nama: allTexts[0].value,
     rencana: document.querySelector("input[name=rencana]:checked")?.parentElement.innerText.trim() || "",
-    pt: document.querySelectorAll("input[type=text]")[1]?.value || "",
-    jurusan1: document.querySelectorAll("input[type=text]")[2]?.value || "",
-    jurusan2: document.querySelectorAll("input[type=text]")[3]?.value || "",
+    pt: allTexts[1]?.value || "",
+    jurusan1: allTexts[2]?.value || "",
+    jurusan2: allTexts[3]?.value || "",
     nilai: [],
     jumlahSemester: [],
     rataSemester: []
   };
 
-  document.querySelectorAll("input.nilai").forEach(i=>{
-    data.nilai.push(i.value || "");
-  });
+  if(!data.nama) { alert("Nama harus diisi!"); return; }
 
-  for(let i=1;i<=5;i++){
+  document.querySelectorAll("input.nilai").forEach(i=> data.nilai.push(i.value || "0"));
+  for(let i=1; i<=5; i++){
     data.jumlahSemester.push(document.getElementById("s"+i).innerText);
     data.rataSemester.push(document.getElementById("r"+i).innerText);
   }
 
   fetch("https://script.google.com/macros/s/AKfycbxeDiTNnFevPcyE5NTT7beXFCBzV3Sj6b0JtvQIWif_MpSU1Opuj-NHH8Sh8-qNrQVtGw/exec", {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(() => {
-    alert("✅ Data berhasil disimpan ke Spreadsheet");
-  })
-  .catch(err => {
-    alert("❌ Gagal menyimpan");
-    console.error(err);
-  });
+  .then(() => alert("✅ Data berhasil dikirim ke sistem"))
+  .catch(err => alert("❌ Gagal menyimpan data"));
 }
 </script>
 
