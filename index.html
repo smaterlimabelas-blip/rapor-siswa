@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Rekam Jejak Nilai Rapor</title>
+
+<style>
+body{font-family:"Times New Roman";background:#ccc}
+.page{width:210mm;background:#fff;margin:10mm auto;padding:15mm}
+h3{text-align:center;margin-bottom:10px}
+
+/* IDENTITAS */
+.identitas{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11pt;
+  margin-bottom:15px;
+}
+.identitas td{
+  border:1px solid #000;
+  padding:6px;
+}
+.identitas .label{width:230px;font-weight:bold}
+.identitas .titik{width:20px;text-align:center}
+.identitas input[type=text]{
+  width:100%;
+  border:none;
+  font-family:inherit;
+}
+.identitas .opsi label{margin-right:20px}
+
+/* TABEL NILAI */
+.rapor{width:100%;border-collapse:collapse;font-size:11pt}
+.rapor th,.rapor td{border:1px solid #000;padding:5px;text-align:center}
+.rapor td.mapel{text-align:left}
+input.nilai{width:45px;border:none;text-align:center;font-family:inherit}
+
+/* BLOK SEL */
+td.block{background:#444}
+td.block input{display:none}
+
+@media print{
+ body{background:#fff}
+ .page{margin:0}
+ input{border:none}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<h3>REKAM JEJAK NILAI RAPOR</h3>
+
+<!-- IDENTITAS -->
+<table class="identitas">
+<tr>
+  <td class="label">NAMA</td>
+  <td class="titik">:</td>
+  <td colspan="6"><input type="text"></td>
+</tr>
+
+<tr>
+  <td class="label">RENCANA SETELAH LULUS</td>
+  <td class="titik">:</td>
+  <td colspan="6" class="opsi">
+    <label><input type="radio" name="rencana"> Kuliah</label>
+    <label><input type="radio" name="rencana"> Bekerja</label>
+    <label><input type="radio" name="rencana"> Wirausaha</label>
+    <label><input type="radio" name="rencana"> Lainnya</label>
+  </td>
+</tr>
+
+<tr>
+  <td class="label">PILIHAN PERGURUAN TINGGI</td>
+  <td class="titik">:</td>
+  <td colspan="6"><input type="text"></td>
+</tr>
+
+<tr>
+  <td class="label" rowspan="2">PILIHAN JURUSAN</td>
+  <td class="titik" rowspan="2">:</td>
+  <td colspan="6">1. <input type="text"></td>
+</tr>
+<tr>
+  <td colspan="6">2. <input type="text"></td>
+</tr>
+</table>
+
+<!-- TABEL NILAI -->
+<table class="rapor" id="rapor">
+<tr>
+  <th rowspan="2">NO</th>
+  <th rowspan="2">MATA PELAJARAN</th>
+  <th colspan="5">SEMESTER</th>
+  <th rowspan="2">JUMLAH</th>
+  <th rowspan="2">RATA-RATA</th>
+</tr>
+<tr>
+  <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+</tr>
+
+<script>
+const aturan={
+ s12:["Sejarah","Biologi","Ekonomi","Geografi","Sosiologi","Prakarya"],
+ s35:["Ilmu Pengetahuan Alam","Ilmu Pengetahuan Sosial","Informatika"]
+};
+
+const mapel=[
+"Pendidikan Agama dan Budi Pekerti",
+"Pendidikan Pancasila",
+"Bahasa Indonesia",
+"Matematika",
+"Ilmu Pengetahuan Alam (IPA)",
+"Ilmu Pengetahuan Sosial (IPS)",
+"Bahasa Inggris",
+"Pendidikan Jasmani Olahraga dan",
+"Informatika",
+"Sejarah",
+"Seni dan Budaya",
+"Biologi",
+"Ekonomi",
+"Geografi",
+"Sosiologi",
+"Prakarya dan Kewirausahaan",
+"Mulok : Bahasa Sunda"
+];
+
+mapel.forEach((m,i)=>{
+ document.write(`<tr><td>${i+1}</td><td class="mapel">${m}</td>`);
+ for(let s=1;s<=5;s++){
+  let block=false;
+  if(s<=2 && aturan.s12.some(x=>m.includes(x))) block=true;
+  if(s>=3 && aturan.s35.some(x=>m.includes(x))) block=true;
+  document.write(block
+    ? `<td class="block"></td>`
+    : `<td><input class="nilai" oninput="hitung()"></td>`
+  );
+ }
+ document.write(`<td class="jml">0</td><td class="rata">0</td></tr>`);
+});
+</script>
+
+<tr>
+<th colspan="2">JUMLAH</th>
+<th id="s1">0</th><th id="s2">0</th><th id="s3">0</th>
+<th id="s4">0</th><th id="s5">0</th>
+<th></th><th></th>
+</tr>
+<tr>
+<th colspan="2">RATA-RATA</th>
+<th id="r1">0</th><th id="r2">0</th><th id="r3">0</th>
+<th id="r4">0</th><th id="r5">0</th>
+<th></th><th></th>
+</tr>
+</table>
+
+<br>
+<button onclick="window.print()">🖨️ Download PDF</button>
+<button onclick="kirim()">💾 Simpan ke Spreadsheet</button>
+
+</div>
+
+<script>
+function hitung(){
+ let sumS=[0,0,0,0,0], cntS=[0,0,0,0,0];
+ document.querySelectorAll("#rapor tr").forEach(tr=>{
+  const inputs=tr.querySelectorAll("input.nilai");
+  if(inputs.length){
+   let sum=0,c=0;
+   inputs.forEach((i,idx)=>{
+    if(i.value){
+     sum+=+i.value;c++;
+     sumS[idx]+=+i.value;cntS[idx]++;
+    }
+   });
+   tr.querySelector(".jml").innerText=sum;
+   tr.querySelector(".rata").innerText=c?(sum/c).toFixed(2):0;
+  }
+ });
+ for(let i=0;i<5;i++){
+  document.getElementById("s"+(i+1)).innerText=sumS[i];
+  document.getElementById("r"+(i+1)).innerText=
+    cntS[i]?(sumS[i]/cntS[i]).toFixed(2):0;
+ }
+}
+</script>
+<script>
+function kirim(){
+  const data = {
+    nama: document.querySelector("input[type=text]").value,
+    rencana: document.querySelector("input[name=rencana]:checked")?.parentElement.innerText.trim() || "",
+    pt: document.querySelectorAll("input[type=text]")[1]?.value || "",
+    jurusan1: document.querySelectorAll("input[type=text]")[2]?.value || "",
+    jurusan2: document.querySelectorAll("input[type=text]")[3]?.value || "",
+    nilai: [],
+    jumlahSemester: [],
+    rataSemester: []
+  };
+
+  document.querySelectorAll("input.nilai").forEach(i=>{
+    data.nilai.push(i.value || "");
+  });
+
+  for(let i=1;i<=5;i++){
+    data.jumlahSemester.push(document.getElementById("s"+i).innerText);
+    data.rataSemester.push(document.getElementById("r"+i).innerText);
+  }
+
+  fetch("https://script.google.com/macros/s/AKfycbxeDiTNnFevPcyE5NTT7beXFCBzV3Sj6b0JtvQIWif_MpSU1Opuj-NHH8Sh8-qNrQVtGw/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(() => {
+    alert("✅ Data berhasil disimpan ke Spreadsheet");
+  })
+  .catch(err => {
+    alert("❌ Gagal menyimpan");
+    console.error(err);
+  });
+}
+</script>
+
+</body>
+</html>
