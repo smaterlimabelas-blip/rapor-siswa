@@ -6,8 +6,8 @@
 
 <style>
 body{font-family:"Times New Roman", Times, serif; background:#ccc; margin:0; padding:0;}
-.page{width:210mm; background:#fff; margin:10mm auto; padding:15mm; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-height: 297mm;}
-h3{text-align:center; margin-bottom:20px; text-transform: uppercase; letter-spacing: 1px;}
+.page{width:180mm; background:#fff; margin:5mm auto; padding:5mm; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-height: 280mm;}
+h3{text-align:center; margin-bottom:10px; text-transform: uppercase; letter-spacing: 1px;}
 
 /* IDENTITAS */
 .identitas{
@@ -88,26 +88,18 @@ button {
 .btn-print { background-color: #e7e7e7; }
 .btn-send { background-color: #4CAF50; color: white; border: none; }
 
-@media print{
-  body{background:#fff;}
-
-  .page{
-    margin:0 auto;
-    box-shadow:none;
-    width:82%;
+@media print {
+  table {
+    page-break-inside: auto;
   }
-
-  .action-buttons{
-    display:none;
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
   }
+}
 
-  .keterangan-section{
-    display:none;
-  }
-
-  input::placeholder{
-    color: transparent;
-  }
+.page {
+  height: auto !important;
 }
 </style>
 </head>
@@ -191,7 +183,7 @@ button {
   </div>
 
   <div class="action-buttons">
-    <button class="btn-print" onclick="window.print()">🖨️ Download / Cetak PDF</button>
+    <button class="btn-print" onclick="downloadPDF()">⬇️ Download PDF</button>
     <button class="btn-send" onclick="kirim()">💾 Kirim Data Rekam Jejak</button>
   </div>
 </div>
@@ -280,7 +272,7 @@ function kirim(){
     data.rataSemester.push(document.getElementById("r"+i).innerText);
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbxeDiTNnFevPcyE5NTT7beXFCBzV3Sj6b0JtvQIWif_MpSU1Opuj-NHH8Sh8-qNrQVtGw/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzX7CRTUNChNQKUqgYuAMWkHBLV2crL4idh_lvRsFKS85s9HxCrAjzlkLVS36tIKowswA/exec", {
     method: "POST",
     mode: "no-cors",
     body: JSON.stringify(data)
@@ -288,7 +280,36 @@ function kirim(){
   .then(() => alert("✅ Data berhasil dikirim ke sistem"))
   .catch(err => alert("❌ Gagal menyimpan data"));
 }
+function downloadPDF() {
+  document.querySelector(".action-buttons").style.display = "none";
+  document.querySelector(".keterangan-section").style.display = "none";
+
+  const halaman = document.querySelector(".page");
+
+  html2pdf().set({
+    margin: [10, 10, 10, 10],
+    filename: 'Rekam_Jejak_Nilai_Rapor.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      scrollY: 0
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
+    },
+    pagebreak: {
+      mode: ['css', 'legacy']
+    }
+  }).from(halaman).save().then(() => {
+    document.querySelector(".action-buttons").style.display = "";
+    document.querySelector(".keterangan-section").style.display = "";
+  });
+}
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </body>
 </html>
