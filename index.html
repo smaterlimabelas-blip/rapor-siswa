@@ -90,10 +90,24 @@ button {
 
 @media print{
   body{background:#fff;}
-  .page{margin:0; box-shadow:none; width: 100%;}
-  .action-buttons {display:none;}
-  input::placeholder {color: transparent;}
-  .keterangan-section {border: 1px solid #000;} /* Garis tegas saat diprint */
+
+  .page{
+    margin:0 auto;
+    box-shadow:none;
+    width:82%;
+  }
+
+  .action-buttons{
+    display:none;
+  }
+
+  .keterangan-section{
+    display:none;
+  }
+
+  input::placeholder{
+    color: transparent;
+  }
 }
 </style>
 </head>
